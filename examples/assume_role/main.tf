@@ -9,7 +9,9 @@ provider "aws" {
 }
 
 resource "castai_aws_user_arn" "cast_user" {
-
+  account_id                 = var.aws_account_id
+  region                     = var.aws_cluster_region
+  cluster_name               = var.aws_cluster_name
 }
 
 module "castai-aws-iam" {
