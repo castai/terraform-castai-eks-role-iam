@@ -24,12 +24,6 @@ variable "aws_account_id" {
   description = "ID of AWS account the cluster is located in."
 }
 
-variable "castai_iam_user_name" {
-  type        = string
-  description = "Name of a IAM user to create."
-  default     = ""
-}
-
 variable "castai_iam_policy_name" {
   type        = string
   description = "Name of a IAM policy to create."
@@ -38,6 +32,6 @@ variable "castai_iam_policy_name" {
 
 variable "castai_user_arn" {
   type        = string
-  description = "Name of a IAM policy to create."
+  description = "ARN of CAST AI user for which AssumeRole trust access should be granted"
   default     = ""
 }
