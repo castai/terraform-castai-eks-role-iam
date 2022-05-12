@@ -31,9 +31,11 @@ resource "aws_iam_policy" "castai_iam_policy" {
   policy = data.castai_eks_settings.eks.iam_policy_json
 }
 
-resource "aws_iam_role_policy_attachment" "castai_iam_lambda_policy_attachment" {
-  for_each = toset(data.castai_eks_settings.eks.lambda_policies)
-
+resource "aws_iam_role_policy_attachment" "castai_iam_readonly_policy_attachment" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
+    "arn:aws:iam::aws:policy/IAMReadOnlyAccess",
+  ])
   role       = aws_iam_role.test_role.name
   policy_arn = each.value
 }
@@ -56,7 +58,7 @@ resource "aws_iam_role" "instance_profile_role" {
         Principal = {
           Service = "ec2.amazonaws.com"
         }
-        Action    = ["sts:AssumeRole"]
+        Action = ["sts:AssumeRole"]
       }
     ]
   })
