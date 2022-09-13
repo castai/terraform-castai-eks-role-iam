@@ -70,7 +70,11 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role_policy_attachment" "castai_instance_profile_policy" {
-  for_each = toset(data.castai_eks_settings.eks.instance_profile_policies)
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  ])
 
   role       = aws_iam_instance_profile.instance_profile.role
   policy_arn = each.value
