@@ -30,3 +30,7 @@ module "castai-eks-iam-role" {
   aws_cluster_name   = var.aws_cluster_name
 }
 ```
+
+# Examples
+
+Usage examples are located in [terraform provider repo](https://github.com/castai/terraform-provider-castai/tree/master/examples/eks)
