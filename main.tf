@@ -5,7 +5,10 @@ locals {
   iam_policy_name            = var.create_iam_resources_per_cluster ? "CastEKSPolicy-${local.resource_name_postfix}" : "CastEKSPolicy-tf"
   iam_role_policy_name       = "castai-user-policy-${local.resource_name_postfix}"
   instance_profile_role_name = "castai-eks-instance-${local.resource_name_postfix}"
+  iam_policy_prefix          = "arn:${data.aws_partition.current.partition}:iam::aws:policy"
 }
+
+data "aws_partition" "current" {}
 
 # castai eks settings (provides required iam policies)
 
@@ -33,8 +36,8 @@ resource "aws_iam_policy" "castai_iam_policy" {
 
 resource "aws_iam_role_policy_attachment" "castai_iam_readonly_policy_attachment" {
   for_each = toset([
-    "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
-    "arn:aws:iam::aws:policy/IAMReadOnlyAccess",
+    "${local.iam_policy_prefix}/AmazonEC2ReadOnlyAccess",
+    "${local.iam_policy_prefix}/IAMReadOnlyAccess",
   ])
   role       = aws_iam_role.test_role.name
   policy_arn = each.value
@@ -71,9 +74,9 @@ resource "aws_iam_instance_profile" "instance_profile" {
 
 resource "aws_iam_role_policy_attachment" "castai_instance_profile_policy" {
   for_each = toset([
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+    "${local.iam_policy_prefix}/AmazonEKSWorkerNodePolicy",
+    "${local.iam_policy_prefix}/AmazonEC2ContainerRegistryReadOnly",
+    "${local.iam_policy_prefix}/AmazonEKS_CNI_Policy"
   ])
 
   role       = aws_iam_instance_profile.instance_profile.role
