@@ -1,6 +1,6 @@
 output "role_arn" {
   description = "Arn of created AWS user"
-  value       = aws_iam_role.test_role.arn
+  value       = aws_iam_role.cast_role.arn
 }
 
 output "instance_profile_arn" {
