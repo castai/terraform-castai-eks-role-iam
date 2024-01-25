@@ -20,13 +20,18 @@ data "castai_eks_settings" "eks" {
 }
 
 resource "aws_iam_role_policy_attachment" "castai_iam_policy_attachment" {
-  role       = aws_iam_role.test_role.name
+  role       = aws_iam_role.cast_role.name
   policy_arn = aws_iam_policy.castai_iam_policy.arn
 }
 
-resource "aws_iam_role" "test_role" {
+resource "aws_iam_role" "cast_role" {
   name               = local.iam_role_name
   assume_role_policy = data.aws_iam_policy_document.cast_assume_role_policy.json
+}
+
+moved {
+  from = aws_iam_role.test_role
+  to   = aws_iam_role.cast_role
 }
 
 resource "aws_iam_policy" "castai_iam_policy" {
@@ -39,13 +44,13 @@ resource "aws_iam_role_policy_attachment" "castai_iam_readonly_policy_attachment
     "${local.iam_policy_prefix}/AmazonEC2ReadOnlyAccess",
     "${local.iam_policy_prefix}/IAMReadOnlyAccess",
   ])
-  role       = aws_iam_role.test_role.name
+  role       = aws_iam_role.cast_role.name
   policy_arn = each.value
 }
 
 resource "aws_iam_role_policy" "castai_role_iam_policy" {
   name   = local.iam_role_policy_name
-  role   = aws_iam_role.test_role.name
+  role   = aws_iam_role.cast_role.name
   policy = data.castai_eks_settings.eks.iam_user_policy_json
 }
 # iam - instance profile role
