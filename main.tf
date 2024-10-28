@@ -4,7 +4,7 @@ locals {
   iam_role_name              = "castai-eks-${substr(local.resource_name_postfix, 0, 53)}"
   iam_policy_name            = var.create_iam_resources_per_cluster ? "CastEKSPolicy-${local.resource_name_postfix}" : "CastEKSPolicy-tf"
   iam_role_policy_name       = "castai-user-policy-${substr(local.resource_name_postfix, 0, 45)}"
-  instance_profile_role_name = "castai-eks-instance-${substr(local.resource_name_postfix, 0, 44)}"
+  instance_profile_role_name = "cast-${substr(local.resource_name_postfix, 0, 40)}-eks-${substr(var.castai_cluster_id, 0, 8)}"
   iam_policy_prefix          = "arn:${data.aws_partition.current.partition}:iam::aws:policy"
 }
 

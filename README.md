@@ -28,6 +28,7 @@ module "castai-eks-iam-role" {
   aws_cluster_vpc_id = var.aws_vpc_id
   aws_cluster_region = var.aws_cluster_region
   aws_cluster_name   = var.aws_cluster_name
+  castai_cluster_id  = var.castai_cluster_id
 }
 ```
 

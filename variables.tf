@@ -29,3 +29,8 @@ variable "castai_user_arn" {
   description = "ARN of CAST AI user for which AssumeRole trust access should be granted"
   default     = ""
 }
+
+variable "castai_cluster_id" {
+  type        = string
+  description = "ID of CAST AI cluster"
+}
