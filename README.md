@@ -21,7 +21,7 @@ A module to create AWS IAM policies and a role to connect to CAST.AI
 Requires `castai/castai` and `hashicorp/aws` providers to be configured.
 
 ```hcl
-module "castai-eks-iam-role" {
+module "castai-eks-role-iam" {
   source = "castai/eks-role-iam/castai"
 
   aws_account_id     = var.aws_account_id

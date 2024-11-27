@@ -6,6 +6,12 @@ locals {
   iam_role_policy_name       = "castai-user-policy-${substr(local.resource_name_postfix, 0, 45)}"
   instance_profile_role_name = "castai-eks-instance-${substr(local.resource_name_postfix, 0, 44)}"
   iam_policy_prefix          = "arn:${data.aws_partition.current.partition}:iam::aws:policy"
+
+  castai_instance_profile_policy_list = flatten([
+    "${local.iam_policy_prefix}/AmazonEKSWorkerNodePolicy",
+    "${local.iam_policy_prefix}/AmazonEC2ContainerRegistryReadOnly",
+    var.attach_worker_cni_policy ? ["${local.iam_policy_prefix}/AmazonEKS_CNI_Policy"] : []
+  ])
 }
 
 data "aws_partition" "current" {}
@@ -56,13 +62,13 @@ resource "aws_iam_role_policy" "castai_role_iam_policy" {
 # iam - instance profile role
 
 resource "aws_iam_role" "instance_profile_role" {
-  name               = local.instance_profile_role_name
+  name = local.instance_profile_role_name
   assume_role_policy = jsonencode({
     Version : "2012-10-17"
     Statement : [
       {
-        Sid       = ""
-        Effect    = "Allow"
+        Sid    = ""
+        Effect = "Allow"
         Principal = {
           Service = "ec2.amazonaws.com"
         }
@@ -78,11 +84,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role_policy_attachment" "castai_instance_profile_policy" {
-  for_each = toset([
-    "${local.iam_policy_prefix}/AmazonEKSWorkerNodePolicy",
-    "${local.iam_policy_prefix}/AmazonEC2ContainerRegistryReadOnly",
-    "${local.iam_policy_prefix}/AmazonEKS_CNI_Policy"
-  ])
+  for_each = toset(local.castai_instance_profile_policy_list)
 
   role       = aws_iam_instance_profile.instance_profile.role
   policy_arn = each.value

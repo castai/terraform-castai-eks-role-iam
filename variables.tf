@@ -29,3 +29,11 @@ variable "castai_user_arn" {
   description = "ARN of CAST AI user for which AssumeRole trust access should be granted"
   default     = ""
 }
+
+variable "attach_worker_cni_policy" {
+  type        = bool
+  description = "Whether to attach the Amazon managed `AmazonEKS_CNI_Policy` IAM policy to the default worker IAM role. WARNING: If set `false` the permissions must be assigned to the `aws-node` DaemonSet pods via another method or nodes will not be able to join the cluster."
+  default     = true
+}
+
+
