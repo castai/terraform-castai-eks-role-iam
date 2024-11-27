@@ -27,7 +27,6 @@ variable "aws_account_id" {
 variable "castai_user_arn" {
   type        = string
   description = "ARN of CAST AI user for which AssumeRole trust access should be granted"
-  default     = ""
 }
 
 variable "attach_worker_cni_policy" {
