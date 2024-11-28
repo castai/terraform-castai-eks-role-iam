@@ -90,6 +90,30 @@ resource "aws_iam_role_policy_attachment" "castai_instance_profile_policy" {
   policy_arn = each.value
 }
 
+# Create the IAM Policy for IPv6 assignment
+resource "aws_iam_policy" "ec2_assign_ipv6" {
+  count       = var.enable_ipv6 ? 1 : 0
+  name        = "CastEC2AssignIPv6Policy"
+  description = "Policy to allow EC2 to assign IPv6 addresses"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = "ec2:AssignIpv6Addresses",
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Attach the policy to the role associated with the instance profile
+resource "aws_iam_role_policy_attachment" "attach_ec2_assign_ipv6" {
+  count      = var.enable_ipv6 ? 1 : 0
+  role       = aws_iam_instance_profile.instance_profile.role
+  policy_arn = aws_iam_policy.ec2_assign_ipv6[0].arn
+}
+
 data "aws_iam_policy_document" "cast_assume_role_policy" {
   statement {
     sid = ""
