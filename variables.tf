@@ -35,4 +35,8 @@ variable "attach_worker_cni_policy" {
   default     = true
 }
 
-
+variable "enable_ipv6" {
+  type        = bool
+  description = "Whether to enable IPv6 CNI policy for the cluster."
+  default     = true
+}
