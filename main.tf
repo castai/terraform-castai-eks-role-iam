@@ -6,6 +6,7 @@ locals {
   iam_role_policy_name       = "castai-user-policy-${substr(local.resource_name_postfix, 0, 45)}"
   instance_profile_role_name = "castai-eks-instance-${substr(local.resource_name_postfix, 0, 44)}"
   iam_policy_prefix          = "arn:${data.aws_partition.current.partition}:iam::aws:policy"
+  ipv6_policy_name           = "CastEC2AssignIPv6Policy-${local.resource_name_postfix}"
 
   castai_instance_profile_policy_list = flatten([
     "${local.iam_policy_prefix}/AmazonEKSWorkerNodePolicy",
@@ -93,7 +94,7 @@ resource "aws_iam_role_policy_attachment" "castai_instance_profile_policy" {
 # Create the IAM Policy for IPv6 assignment
 resource "aws_iam_policy" "ec2_assign_ipv6" {
   count       = var.enable_ipv6 ? 1 : 0
-  name        = "CastEC2AssignIPv6Policy"
+  name        = local.ipv6_policy_name
   description = "Policy to allow EC2 to assign IPv6 addresses"
   policy = jsonencode({
     Version = "2012-10-17",
