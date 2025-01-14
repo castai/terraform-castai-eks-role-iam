@@ -36,11 +36,6 @@ resource "aws_iam_role" "cast_role" {
   assume_role_policy = data.aws_iam_policy_document.cast_assume_role_policy.json
 }
 
-moved {
-  from = aws_iam_role.test_role
-  to   = aws_iam_role.cast_role
-}
-
 resource "aws_iam_policy" "castai_iam_policy" {
   name   = local.iam_policy_name
   policy = data.castai_eks_settings.eks.iam_policy_json
