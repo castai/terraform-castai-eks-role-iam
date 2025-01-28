@@ -31,7 +31,7 @@ module "castai-eks-role-iam" {
   castai_user_arn    = var.castai_user_arn
 }
 ```
-
+# TEST
 # Examples
 
 Usage examples are located in [terraform provider repo](https://github.com/castai/terraform-provider-castai/tree/master/examples/eks)
