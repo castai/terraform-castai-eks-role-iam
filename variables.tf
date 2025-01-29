@@ -40,3 +40,9 @@ variable "enable_ipv6" {
   description = "Whether to enable IPv6 CNI policy for the cluster."
   default     = true
 }
+
+variable "max_session_duration" {
+  description = "Maximum session duration (in seconds) that you want to set for the specified role."
+  type        = number
+  default     = 3600
+}

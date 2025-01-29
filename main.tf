@@ -59,6 +59,7 @@ resource "aws_iam_role_policy" "castai_role_iam_policy" {
 
 resource "aws_iam_role" "instance_profile_role" {
   name = local.instance_profile_role_name
+  max_session_duration =  var.max_session_duration
   assume_role_policy = jsonencode({
     Version : "2012-10-17"
     Statement : [
@@ -68,7 +69,10 @@ resource "aws_iam_role" "instance_profile_role" {
         Principal = {
           Service = "ec2.amazonaws.com"
         }
-        Action = ["sts:AssumeRole"]
+        "Action": [
+            "sts:AssumeRole",
+            "sts:TagSession"
+        ]
       }
     ]
   })
