@@ -46,3 +46,9 @@ variable "max_session_duration" {
   type        = number
   default     = 3600
 }
+
+variable "castai_user_external_id" {
+  description = "Optional external ID used in assume role policy condition"
+  type        = string
+  default     = null # Null because of backwards compatibility
+}
