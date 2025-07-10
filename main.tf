@@ -116,16 +116,21 @@ resource "aws_iam_role_policy_attachment" "attach_ec2_assign_ipv6" {
 
 data "aws_iam_policy_document" "cast_assume_role_policy" {
   statement {
-    sid = ""
-
-    actions = [
-      "sts:AssumeRole",
-    ]
+    sid     = ""
+    actions = ["sts:AssumeRole"]
 
     principals {
       type        = "AWS"
       identifiers = [var.castai_user_arn]
     }
+
+    dynamic "condition" {
+      for_each = var.castai_user_external_id!= null ? [1] : []
+      content {
+        test     = "StringEquals"
+        variable = "sts:ExternalId"
+        values   = [var.castai_user_external_id]
+      }
+    }
   }
 }
-
