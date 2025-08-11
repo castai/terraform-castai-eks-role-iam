@@ -11,7 +11,9 @@ locals {
   castai_instance_profile_policy_list = flatten([
     "${local.iam_policy_prefix}/AmazonEKSWorkerNodePolicy",
     "${local.iam_policy_prefix}/AmazonEC2ContainerRegistryReadOnly",
-    var.attach_worker_cni_policy ? ["${local.iam_policy_prefix}/AmazonEKS_CNI_Policy"] : []
+    var.attach_worker_cni_policy ? ["${local.iam_policy_prefix}/AmazonEKS_CNI_Policy"] : [],
+    var.attach_ebs_csi_driver_policy ? ["${local.iam_policy_prefix}/service-role/AmazonEBSCSIDriverPolicy"] : [],
+    var.attach_ssm_managed_instance_core ? ["${local.iam_policy_prefix}/AmazonSSMManagedInstanceCore"] : []
   ])
 }
 
