@@ -35,6 +35,18 @@ variable "attach_worker_cni_policy" {
   default     = true
 }
 
+variable "attach_ebs_csi_driver_policy" {
+  type        = bool
+  description = "Whether to attach the Amazon managed `AmazonEBSCSIDriverPolicy` IAM policy"
+  default     = true
+}
+
+variable "attach_ssm_managed_instance_core" {
+  type        = bool
+  description = "Whether to attach the Amazon managed `AmazonSSMManagedInstanceCore` IAM policy"
+  default     = true
+}
+
 variable "enable_ipv6" {
   type        = bool
   description = "Whether to enable IPv6 CNI policy for the cluster."
