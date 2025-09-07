@@ -9,11 +9,11 @@ locals {
   ipv6_policy_name           = "CastEC2AssignIPv6Policy-${local.resource_name_postfix}"
 
   castai_instance_profile_policy_list = flatten([
-    "${local.iam_policy_prefix}/AmazonEKSWorkerNodePolicy",
-    "${local.iam_policy_prefix}/AmazonEC2ContainerRegistryReadOnly",
-    var.attach_worker_cni_policy ? ["${local.iam_policy_prefix}/AmazonEKS_CNI_Policy"] : [],
-    var.attach_ebs_csi_driver_policy ? ["${local.iam_policy_prefix}/service-role/AmazonEBSCSIDriverPolicy"] : [],
-    var.attach_ssm_managed_instance_core ? ["${local.iam_policy_prefix}/AmazonSSMManagedInstanceCore"] : []
+    "AmazonEKSWorkerNodePolicy",
+    "AmazonEC2ContainerRegistryReadOnly",
+    var.attach_worker_cni_policy ? ["AmazonEKS_CNI_Policy"] : [],
+    var.attach_ebs_csi_driver_policy ? ["service-role/AmazonEBSCSIDriverPolicy"] : [],
+    var.attach_ssm_managed_instance_core ? ["AmazonSSMManagedInstanceCore"] : []
   ])
 }
 
@@ -45,11 +45,11 @@ resource "aws_iam_policy" "castai_iam_policy" {
 
 resource "aws_iam_role_policy_attachment" "castai_iam_readonly_policy_attachment" {
   for_each = toset([
-    "${local.iam_policy_prefix}/AmazonEC2ReadOnlyAccess",
-    "${local.iam_policy_prefix}/IAMReadOnlyAccess",
+    "AmazonEC2ReadOnlyAccess",
+    "IAMReadOnlyAccess",
   ])
   role       = aws_iam_role.cast_role.name
-  policy_arn = each.value
+  policy_arn = "${local.iam_policy_prefix}/${each.value}"
 }
 
 resource "aws_iam_role_policy" "castai_role_iam_policy" {
@@ -89,7 +89,7 @@ resource "aws_iam_role_policy_attachment" "castai_instance_profile_policy" {
   for_each = toset(local.castai_instance_profile_policy_list)
 
   role       = aws_iam_instance_profile.instance_profile.role
-  policy_arn = each.value
+  policy_arn = "${local.iam_policy_prefix}/${each.value}"
 }
 
 # Create the IAM Policy for IPv6 assignment
