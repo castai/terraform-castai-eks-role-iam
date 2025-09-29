@@ -44,10 +44,11 @@ resource "aws_iam_policy" "castai_iam_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "castai_iam_readonly_policy_attachment" {
-  for_each = toset([
-    "${local.iam_policy_prefix}/AmazonEC2ReadOnlyAccess",
-    "${local.iam_policy_prefix}/IAMReadOnlyAccess",
-  ])
+  for_each = {
+    ec2 = "${local.iam_policy_prefix}/AmazonEC2ReadOnlyAccess"
+    iam = "${local.iam_policy_prefix}/IAMReadOnlyAccess"
+  }
+
   role       = aws_iam_role.cast_role.name
   policy_arn = each.value
 }
@@ -86,7 +87,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role_policy_attachment" "castai_instance_profile_policy" {
-  for_each = toset(local.castai_instance_profile_policy_list)
+  for_each = { for idx, arn in local.castai_instance_profile_policy_list : idx => arn }
 
   role       = aws_iam_instance_profile.instance_profile.role
   policy_arn = each.value
