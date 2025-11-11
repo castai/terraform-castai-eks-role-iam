@@ -1,10 +1,6 @@
 .idea/
 
-# terraform examples/
-examples/**/.terraform/
-examples/**/terraform.d/
-examples/**/crash.log
-examples/**/*.tfstate
-examples/**/*.tfstate.backup
-examples/**/.terraform.lock.hcl
-examples/**/local.auto.tfvars
+**/.terraform/*
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*

@@ -8,13 +8,23 @@ locals {
   iam_policy_prefix          = "arn:${data.aws_partition.current.partition}:iam::aws:policy"
   ipv6_policy_name           = "CastEC2AssignIPv6Policy-${local.resource_name_postfix}"
 
-  castai_instance_profile_policy_list = flatten([
-    "${local.iam_policy_prefix}/AmazonEKSWorkerNodePolicy",
-    "${local.iam_policy_prefix}/AmazonEC2ContainerRegistryReadOnly",
-    var.attach_worker_cni_policy ? ["${local.iam_policy_prefix}/AmazonEKS_CNI_Policy"] : [],
-    var.attach_ebs_csi_driver_policy ? ["${local.iam_policy_prefix}/service-role/AmazonEBSCSIDriverPolicy"] : [],
-    var.attach_ssm_managed_instance_core ? ["${local.iam_policy_prefix}/AmazonSSMManagedInstanceCore"] : []
-  ])
+  castai_instance_profile_policy_list = merge(
+    # Mandatory policies
+    {
+      AmazonEKSWorkerNodePolicy          = "${local.iam_policy_prefix}/AmazonEKSWorkerNodePolicy",
+      AmazonEC2ContainerRegistryReadOnly = "${local.iam_policy_prefix}/AmazonEC2ContainerRegistryReadOnly"
+    },
+    # Optional policies
+    var.attach_worker_cni_policy ? {
+      AmazonEKS_CNI_Policy = "${local.iam_policy_prefix}/AmazonEKS_CNI_Policy"
+    } : {},
+    var.attach_ebs_csi_driver_policy ? {
+      AmazonEBSCSIDriverPolicy = "${local.iam_policy_prefix}/service-role/AmazonEBSCSIDriverPolicy"
+    } : {},
+    var.attach_ssm_managed_instance_core ? {
+      AmazonSSMManagedInstanceCore = "${local.iam_policy_prefix}/AmazonSSMManagedInstanceCore"
+    } : {},
+  )
 }
 
 data "aws_partition" "current" {}
@@ -44,10 +54,10 @@ resource "aws_iam_policy" "castai_iam_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "castai_iam_readonly_policy_attachment" {
-  for_each = toset([
-    "${local.iam_policy_prefix}/AmazonEC2ReadOnlyAccess",
-    "${local.iam_policy_prefix}/IAMReadOnlyAccess",
-  ])
+  for_each = {
+    AmazonEC2ReadOnlyAccess = "${local.iam_policy_prefix}/AmazonEC2ReadOnlyAccess",
+    IAMReadOnlyAccess       = "${local.iam_policy_prefix}/IAMReadOnlyAccess",
+  }
   role       = aws_iam_role.cast_role.name
   policy_arn = each.value
 }
@@ -60,8 +70,8 @@ resource "aws_iam_role_policy" "castai_role_iam_policy" {
 # iam - instance profile role
 
 resource "aws_iam_role" "instance_profile_role" {
-  name = local.instance_profile_role_name
-  max_session_duration =  var.max_session_duration
+  name                 = local.instance_profile_role_name
+  max_session_duration = var.max_session_duration
   assume_role_policy = jsonencode({
     Version : "2012-10-17"
     Statement : [
@@ -71,9 +81,9 @@ resource "aws_iam_role" "instance_profile_role" {
         Principal = {
           Service = "ec2.amazonaws.com"
         }
-        "Action": [
-            "sts:AssumeRole",
-            "sts:TagSession"
+        "Action" : [
+          "sts:AssumeRole",
+          "sts:TagSession"
         ]
       }
     ]
@@ -86,7 +96,7 @@ resource "aws_iam_instance_profile" "instance_profile" {
 }
 
 resource "aws_iam_role_policy_attachment" "castai_instance_profile_policy" {
-  for_each = toset(local.castai_instance_profile_policy_list)
+  for_each = local.castai_instance_profile_policy_list
 
   role       = aws_iam_instance_profile.instance_profile.role
   policy_arn = each.value
@@ -127,7 +137,7 @@ data "aws_iam_policy_document" "cast_assume_role_policy" {
     }
 
     dynamic "condition" {
-      for_each = var.castai_user_external_id!= null ? [1] : []
+      for_each = var.castai_user_external_id != null ? [1] : []
       content {
         test     = "StringEquals"
         variable = "sts:ExternalId"
