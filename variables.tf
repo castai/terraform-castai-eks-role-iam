@@ -24,6 +24,12 @@ variable "aws_account_id" {
   description = "ID of AWS account the cluster is located in."
 }
 
+variable "aws_shared_vpc_account_id" {
+  description = "Optional AWS account ID where the VPC and subnets are located, for shared VPC setups"
+  type        = string
+  default     = ""
+}
+
 variable "castai_user_arn" {
   type        = string
   description = "ARN of CAST AI user for which AssumeRole trust access should be granted"
