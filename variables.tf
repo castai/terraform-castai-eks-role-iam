@@ -27,7 +27,7 @@ variable "aws_account_id" {
 variable "aws_shared_vpc_account_id" {
   description = "Optional AWS account ID where the VPC and subnets are located, for shared VPC setups"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "castai_user_arn" {
