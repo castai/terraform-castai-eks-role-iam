@@ -32,10 +32,11 @@ data "aws_partition" "current" {}
 # castai eks settings (provides required iam policies)
 
 data "castai_eks_settings" "eks" {
-  account_id = var.aws_account_id
-  vpc        = var.aws_cluster_vpc_id
-  region     = var.aws_cluster_region
-  cluster    = var.aws_cluster_name
+  account_id            = var.aws_account_id
+  vpc                   = var.aws_cluster_vpc_id
+  region                = var.aws_cluster_region
+  cluster               = var.aws_cluster_name
+  shared_vpc_account_id = var.aws_shared_vpc_account_id
 }
 
 resource "aws_iam_role_policy_attachment" "castai_iam_policy_attachment" {
