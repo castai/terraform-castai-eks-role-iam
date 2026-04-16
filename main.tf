@@ -54,6 +54,43 @@ resource "aws_iam_policy" "castai_iam_policy" {
   policy = data.castai_eks_settings.eks.iam_policy_json
 }
 
+data "aws_iam_policy_document" "kms_ebs" {
+  count = length(var.kms_key_arns) > 0 ? 1 : 0
+
+  statement {
+    sid    = "AllowEBSKMSAccess"
+    effect = "Allow"
+    actions = [
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:Encrypt",
+      "kms:DescribeKey",
+      "kms:Decrypt",
+      "kms:CreateGrant",
+    ]
+    resources = var.kms_key_arns
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:CallerAccount"
+      values   = [var.aws_account_id]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["ec2.${var.aws_cluster_region}.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "kms_ebs" {
+  count  = length(var.kms_key_arns) > 0 ? 1 : 0
+  name   = "castai-kms-ebs-${local.resource_name_postfix}"
+  role   = aws_iam_role.cast_role.name
+  policy = data.aws_iam_policy_document.kms_ebs[0].json
+}
+
 resource "aws_iam_role_policy_attachment" "castai_iam_readonly_policy_attachment" {
   for_each = {
     AmazonEC2ReadOnlyAccess = "${local.iam_policy_prefix}/AmazonEC2ReadOnlyAccess",
