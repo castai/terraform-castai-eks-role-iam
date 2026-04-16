@@ -72,7 +72,7 @@ variable "castai_user_external_id" {
 }
 
 variable "kms_key_arns" {
-  description = "List of KMS key ARNs to allow EBS encryption/decryption via the instance profile role."
+  description = "Optional List of KMS key ARNs to allow EBS encryption/decryption via the IAM role."
   type        = list(string)
   default     = []
 }
