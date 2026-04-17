@@ -70,3 +70,10 @@ variable "castai_user_external_id" {
   type        = string
   default     = null # Null because of backwards compatibility
 }
+
+variable "kms_key_arns" {
+  description = "Optional List of KMS key ARNs to allow EBS encryption/decryption via the IAM role."
+  type        = list(string)
+  default     = []
+}
+
