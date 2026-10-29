@@ -36,6 +36,18 @@ module "castai-eks-role-iam" {
 }
 ```
 
+Optional: if the module is applied by a principal constrained by a permissions boundary that
+requires newly created IAM roles to carry the same boundary, pass its ARN via `permissions_boundary`:
+
+```hcl
+module "castai-eks-role-iam" {
+  source = "castai/eks-role-iam/castai"
+
+  ...
+  permissions_boundary = "arn:aws:iam::123456789012:policy/ExamplePermissionsBoundary"
+}
+```
+
 # Examples
 
 Usage examples are located in [terraform provider repo](https://github.com/castai/terraform-provider-castai/tree/master/examples/eks)

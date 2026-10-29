@@ -77,3 +77,9 @@ variable "kms_key_arns" {
   default     = []
 }
 
+variable "permissions_boundary" {
+  description = "Optional ARN of the permissions boundary policy to attach to the IAM roles created by this module. Set this when the module is applied by a principal whose permissions boundary requires newly created roles to carry the same boundary, e.g. arn:aws:iam::123456789012:policy/ExamplePermissionsBoundary."
+  type        = string
+  default     = null
+}
+

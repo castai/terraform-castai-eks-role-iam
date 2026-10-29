@@ -45,8 +45,9 @@ resource "aws_iam_role_policy_attachment" "castai_iam_policy_attachment" {
 }
 
 resource "aws_iam_role" "cast_role" {
-  name               = local.iam_role_name
-  assume_role_policy = data.aws_iam_policy_document.cast_assume_role_policy.json
+  name                 = local.iam_role_name
+  assume_role_policy   = data.aws_iam_policy_document.cast_assume_role_policy.json
+  permissions_boundary = var.permissions_boundary
 }
 
 resource "aws_iam_policy" "castai_iam_policy" {
@@ -110,6 +111,7 @@ resource "aws_iam_role_policy" "castai_role_iam_policy" {
 resource "aws_iam_role" "instance_profile_role" {
   name                 = local.instance_profile_role_name
   max_session_duration = var.max_session_duration
+  permissions_boundary = var.permissions_boundary
   assume_role_policy = jsonencode({
     Version : "2012-10-17"
     Statement : [
