@@ -77,3 +77,9 @@ variable "kms_key_arns" {
   default     = []
 }
 
+variable "permissions_boundary" {
+  description = "Optional ARN of a permissions boundary policy to attach to the created IAM roles."
+  type        = string
+  default     = null
+}
+
